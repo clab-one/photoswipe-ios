@@ -1,4 +1,11 @@
 import Photos
+
+// FOLIO 변경: `byteSize(of:)` / `totalBytes(of:)` 를 제거했다.
+// 원본 주석 스스로 "undocumented `fileSize` via KVC ... strip or replace before
+// any App Store submission" 이라고 적어 두었다. FOLIO 는 App Store 에 올리고,
+// 저장 용량 정리는 PhotoSwipe 의 제품이지 FOLIO 의 것이 아니다.
+//
+// 원본: https://github.com/noluyorAbi/photoswipe-ios  (MIT)
 import UIKit
 
 /// Thin wrapper over PhotoKit: authorization, fetching the newest-first asset
@@ -65,22 +72,6 @@ final class PhotoLibraryService {
     }
 
     // MARK: File size
-
-    /// Approximate on-disk bytes for an asset (sum of its resources).
-    ///
-    /// NOTE: `PHAssetResource` exposes no public byte-size API, so this reads
-    /// the undocumented `fileSize` value via KVC. It works reliably but counts
-    /// as private-API access — strip or replace before any App Store submission
-    /// (fine for personal / sideloaded builds). Returns 0 if unavailable.
-    func byteSize(of asset: PHAsset) -> Int64 {
-        PHAssetResource.assetResources(for: asset).reduce(0) { sum, res in
-            sum + ((res.value(forKey: "fileSize") as? Int64) ?? 0)
-        }
-    }
-
-    func totalBytes(of assets: [PHAsset]) -> Int64 {
-        assets.reduce(0) { $0 + byteSize(of: $1) }
-    }
 
     func startCaching(_ assets: [PHAsset], targetSize: CGSize) {
         let options = PHImageRequestOptions()
